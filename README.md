@@ -6,22 +6,31 @@ Allows setting dependencies from a file pointing to tarballs, including hash-che
 
 Tarballs are downloaded to `~/.local/var/tarsync/tarballs/`
 
-Reads a `tarsync.txt` file which has the following format:
+Reads a `tarsync.json` file which has the following format:
 
-```sh
-# MD5 hash      A URL to a tarball          Destination dir      [Source dir]
-abcd123456      https://some_url/file.tgz   src/feature          src/
-# Will store the taball at ~/.local/var/tarsync/tarballs/abcd123456/file.tgz
-# Will unpack the tarball, and move the contents of src/ into ./src/feature
-#      if source dir is not specified, it is resolved to the base of the extracted tarball itself
-# Destination dir and src dir are not permitted to have root "^/" or ascending ".." path sections
-# Before syncing contents, file tree is descended looking for symlinks - if any are found,
-#   copy is prevented.
+```js
+[
+    {
+        "hash": "abcd1234",
+        "url": "https://some_url/file.tgz",
+        "dest": "src/feature",
+        "src": "src" // optional
+    },
+    {
+        // ... other tarball specs ...
+    }
+]
 ```
+
+* This will store a tarball at `~/.local/var/tarsync/tarballs/abcd1234/file.tgz`
+* TarSync will unpack the tarball, and move the contents of `src/` into `./src/feature`
+* "dest" is a local destination - it cannot have root `/...` or ascending `../` portions to its specification
+    * "dest" must be an empty directory, and can be created if it does not exist
+* "src" is optional - if source dir is not specified, it is resolved to the base of the extracted tarball itself
 
 This syncs all the specified tarballs, validates the hash, and unpacks it to a location.
 
-Hash can be specified as `-` to cause the downloaded item's hash to be printed to console. Unpack will not proceed in this case. Re-run with the hash populated to the file to proceed.
+Hash can be specified as `"-"` to cause the downloaded item's hash to be printed to console. Unpack will not proceed in this case. Re-run with the hash populated to the file to proceed.
 
 ## Applications
 
