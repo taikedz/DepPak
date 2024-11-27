@@ -4,20 +4,19 @@ A small utility inspired by the "dependencies" section in `build.zig.zon`.
 
 Allows setting dependencies from a file pointing to tarballs, including hash-checking.
 
+Tarballs are downloaded to `~/.local/var/tarsync/tarballs/`
+
 Reads a `tarsync.txt` file which has the following format:
 
 ```sh
-# A top-level path where the following names will be stored
-top      ./some/rel/path
-
-# A path         MD5 hash      A URL to a tarball
-name_in_top      abcd1234      https://some_url/file.tgz
-# Will unpack the tarball directly to ./some/rel/path/name_in_top/
-
-# A last option specifies the subfolder we are specifically interested in
-#    storing at the named location
-name_in_top      abcd1234      https://some_url/file.tgz   src/
-# Will unpack the tarball, and move the contents of src/ into ./some/rel/path/name_in_top/
+# MD5 hash      A URL to a tarball          Destination dir      [Source dir]
+abcd123456      https://some_url/file.tgz   src/feature          src/
+# Will store the taball at ~/.local/var/tarsync/tarballs/abcd123456/file.tgz
+# Will unpack the tarball, and move the contents of src/ into ./src/feature
+#      if source dir is not specified, it is resolved to the base of the extracted tarball itself
+# Destination dir and src dir are not permitted to have root "^/" or ascending ".." path sections
+# Before syncing contents, file tree is descended looking for symlinks - if any are found,
+#   copy is prevented.
 ```
 
 This syncs all the specified tarballs, validates the hash, and unpacks it to a location.
@@ -38,14 +37,14 @@ As a libaray, this can be integrated into an application for it to provide exten
 
 * Simple specification of file
 * Standalone commandline utility as single binary with no runtime dependencies
-* Available as linkable library for Zig and C
-* Compatibility priority order Linux, BSD, Windows, Mac
+* Available as a library to integrate in other applications
+* If it becomes relevant, compatibility priority order is Linux, BSD, Windows, Mac
 * Weak copyleft. Tar-Sync itself belongs to the community; but can be integrated in proprietary applications.
 
 ## License
 
 Lesser GPL, 3.0
 
-This means you can link against it in a proprietary system without affecting the license of your own project.
+This means you can link-against/embed it in a proprietary system without affecting the license of your own project.
 
-If you do distribute a modified version of tar-sync itself however, you must release the modified source of your tar-sync copy to whomever should ask. This is limited to tar-sync code, and does not apply to any code that calls it.
+If you do distribute a modified version of tar-sync itself however, you must release the modified source of your tar-sync copy to whomever should ask. This is limited to tar-sync code, and does not apply to any code that calls it or software that embeds it.
