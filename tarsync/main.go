@@ -28,13 +28,14 @@ func main() {
     }
 
     wg.Wait()
+    failures.Close() // FIXME - does this remove access to contents?
 
     var failure_strings string[]
     var failed = false
 
-    // iterate failes - if failures exist, print all  failures
+    // iterate fails - if failures exist, print all  failures
     // then exit without unpacking
-    for fail_entry in failures { // FIXME - do we len(failures) or something?
+    for fail_entry := range failures {
         fmt.Println(fail_entry)
         failed = true
     }
@@ -43,7 +44,7 @@ func main() {
         os.Exit(1)
     }
 
-    for entry in all_entries {
+    for entry := range all_entries {
         // Do not do this as concurrent - process in file declaration order
         extract_entry(entry)
     }
