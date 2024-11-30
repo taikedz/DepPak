@@ -1,9 +1,10 @@
 package main
 
 import (
-    //"fmt"
-    //"net.taikedz.tarsync/tarsync/help"
+    "fmt"
+    "os"
     "sync"
+    //"net.taikedz.tarsync/tarsync/help"
 )
 
 const TARBALL_STORE = "~/.local/var/tarsync/tarballs"
@@ -28,8 +29,19 @@ func main() {
 
     wg.Wait()
 
+    var failure_strings string[]
+    var failed = false
+
     // iterate failes - if failures exist, print all  failures
     // then exit without unpacking
+    for fail_entry in failures { // FIXME - do we len(failures) or something?
+        fmt.Println(fail_entry)
+        failed = true
+    }
+
+    if failed {
+        os.Exit(1)
+    }
 
     for entry in all_entries {
         // Do not do this as concurrent - process in file declaration order
@@ -46,7 +58,7 @@ func download_entry(entry manifest.TarballEntry, wg *sync.WaitGroup, failures ch
     // - produce hash of tarball
     // - validate hash
     //     - if expected hash is "-" then print the URL and the computed hash
-    // - if invalid (including "-"), write URL of failed item
+    // - if invalid (including "-"), write URL of failed item to failuures channel
 }
 
 func extract_entry(entry manifest.TarballEntry, destination_root string) {
