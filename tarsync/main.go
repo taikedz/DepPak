@@ -4,20 +4,17 @@ import (
     "fmt"
     "os"
     "sync"
-    //"net.taikedz.tarsync/tarsync/help"
 )
 
 const TARBALL_STORE = "~/.local/var/tarsync/tarballs"
 
 func main() {
-    // Import the submodules now
-    //help.Printhelp()
     args := argue.ParseCliArgs()
-
-    var wg sync.WaitGroup
+    printIfHelpFlag(args)
 
     all_entries := manifest.LoadManifest(args.jsonfile)
 
+    var wg sync.WaitGroup
     wg.Add(len(all_entries))
     failures = make(chan string, len(all_entries))
 
@@ -33,14 +30,14 @@ func main() {
     var failure_strings string[]
     var failed = false
 
-    // iterate fails - if failures exist, print all  failures
-    // then exit without unpacking
-    for fail_entry := range failures {
-        fmt.Println(fail_entry)
-        failed = true
-    }
-
     if failed {
+        // iterate fails - if failures exist, print all  failures
+        // then exit without unpacking
+        for fail_entry := range failures {
+            fmt.Println(fail_entry)
+            failed = true
+        }
+
         os.Exit(1)
     }
 
