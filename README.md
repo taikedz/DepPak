@@ -1,12 +1,12 @@
-# TarSync
+# DepPak - Deploy Dependency Packages
 
 A small utility inspired by the "dependencies" section in `build.zig.zon`.
 
-Allows setting dependencies from a file pointing to tarballs, including hash-checking.
+Allows setting dependencies from a file pointing to archive files, including hash-checking.
 
-Tarballs are downloaded to `~/.local/var/tarsync/tarballs/`
+Tarballs are downloaded to `~/.local/var/deppak/cache/`
 
-Reads a `tarsync.json` file which has the following format:
+Reads a JSON file which has the following format:
 
 ```js
 [
@@ -20,13 +20,13 @@ Reads a `tarsync.json` file which has the following format:
         }
     },
     {
-        // ... other tarball specs ...
+        // ... other sources specs ...
     }
 ]
 ```
 
-* This will store a tarball at `~/.local/var/tarsync/tarballs/abcd1234/file.tgz`
-* TarSync will unpack the tarball, and move the contents of `appcode/` into `./src/feature`
+* This will store the archive file at `~/.local/var/deppak/tarballs/abcd1234/file.tgz`
+* DepPak will unpack the archive, and move the contents of `appcode/` into `./src/feature`
 
 This syncs all the specified tarballs, validates the hash, and unpacks it to a location.
 
