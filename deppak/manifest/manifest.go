@@ -1,9 +1,8 @@
-package main
+package manifest
 
 import (
     "encoding/json"
     "fmt"
-    "log"
 )
 
 type SyncItem struct {
@@ -13,22 +12,11 @@ type SyncItem struct {
     Src  string `json:src`
 }
 
-func main() {
-    ReadManifest("bogus")
-}
-
-func LoadManifest(path string) {
+func LoadManifest(path string) (*SyncItem, error) {
     // NOTE - when loading the manifest, ensure there are no duplicate hashes (excl "-")
+    // TODO - read from file
     fmt.Println(path)
-
-    data, err := extractManifest(`{"url":"there", "hash":"abcd1234", "dest":"mods/test_mod", "src":"subdir"}`)
-
-    if err != nil {
-        log.Fatal(err)
-    }
-
-    fmt.Println(data)
-    fmt.Println(data.Hash)
+    return extractManifest(`{"url":"there", "hash":"abcd1234", "dest":"mods/test_mod", "src":"subdir"}`)
 }
 
 
