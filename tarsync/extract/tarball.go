@@ -1,5 +1,7 @@
 package extract
 
+// TODO : support other compressions: lzma and bzip2, and also no-compression
+
 // from https://stackoverflow.com/a/57640231
 
 import (

@@ -10,7 +10,7 @@ import (
 // rather than load to memory, then dump to file....
 // https://www.golangcode.com/download-a-file-from-a-url/
 
-func Fetch(url string, destfile string) (err error) {
+func FetchHttp(url string, destfile string) (err error) {
   out, err := os.Create(destfile)
   if err != nil  {
     return err
@@ -31,3 +31,6 @@ func Fetch(url string, destfile string) (err error) {
   return nil
 }
 
+// TODO - also support SSH/SCP
+// Ignore: FTP(S), Telnet, etc. These are defunct protocols that no longer have reason to be used.
+// also support `file://` scheme which should create a symlink
