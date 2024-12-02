@@ -6,7 +6,7 @@ import (
     "sync"
 )
 
-const TARBALL_STORE = "~/.local/var/tarsync/tarballs"
+const TARBALL_STORE = "~/.local/var/deppak/tarballs"
 
 func main() {
     args := argue.ParseCliArgs()
