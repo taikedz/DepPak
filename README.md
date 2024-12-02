@@ -13,8 +13,11 @@ Reads a `tarsync.json` file which has the following format:
     {
         "hash": "abcd1234",
         "url": "https://some_url/file.tgz",
-        "dest": "src/feature",
-        "src": "appcode/" // optional
+        "deploy" : {
+            // copy from archive's `appcode/` location to the deploy location's `src/feature` subdir
+            "appcode/" : ["src/feature"]
+            // The same source location can be copied to any number of destination locations
+        }
     },
     {
         // ... other tarball specs ...
@@ -24,11 +27,6 @@ Reads a `tarsync.json` file which has the following format:
 
 * This will store a tarball at `~/.local/var/tarsync/tarballs/abcd1234/file.tgz`
 * TarSync will unpack the tarball, and move the contents of `appcode/` into `./src/feature`
-    * If the key `src` is not supplied, the root of the tarball will be copied
-* "dest" is a local destination - it cannot have root `/...` or ascending `../` portions to its specification
-    * "dest" must be an empty directory, and can be created if it does not exist
-    * "dest" resolves against the `--unpack-to` destination, which defaults to `./`
-* "src" is optional - if source dir is not specified, it is resolved to the base of the extracted tarball itself
 
 This syncs all the specified tarballs, validates the hash, and unpacks it to a location.
 
