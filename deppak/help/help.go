@@ -1,9 +1,11 @@
 package help
 
 import (
+    "os"
     "fmt"
 )
 
-func Printhelp() {
-    fmt.Println("Hello")
+func PrintIfHelpFlag() {
+    fmt.Println("Not yet implemented")
+    os.Exit(1)
 }

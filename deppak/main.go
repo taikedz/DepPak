@@ -4,13 +4,16 @@ import (
     "fmt"
     "os"
     "sync"
+
+    "net.taikedz.deppak/deppak/help"
+    "net.taikedz.deppak/deppak/net"
 )
 
 const TARBALL_STORE = "~/.local/var/deppak/tarballs"
 
 func main() {
     args := argue.ParseCliArgs()
-    printIfHelpFlag(args)
+    help.PrintIfHelpFlag(args)
 
     all_entries := manifest.LoadManifest(args.jsonfile)
 
@@ -25,7 +28,7 @@ func main() {
     }
 
     wg.Wait()
-    failures.Close() // FIXME - does this remove access to contents?
+    close(failures)
 
     var failure_strings string[]
     var failed = false
@@ -40,11 +43,12 @@ func main() {
 
         os.Exit(1)
     }
-
+    /*
     for entry := range all_entries {
         // Do not do this as concurrent - process in file declaration order
         extract_entry(entry)
     }
+    */
 }
 
 func download_entry(entry manifest.TarballEntry, wg *sync.WaitGroup, failures chan string) {
