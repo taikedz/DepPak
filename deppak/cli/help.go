@@ -1,4 +1,4 @@
-package help
+package cli
 
 import (
     "os"

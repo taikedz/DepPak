@@ -5,15 +5,15 @@ import (
     "os"
     "sync"
 
-    "net.taikedz.deppak/deppak/help"
+    "net.taikedz.deppak/deppak/cli"
     "net.taikedz.deppak/deppak/net"
 )
 
 const TARBALL_STORE = "~/.local/var/deppak/tarballs"
 
 func main() {
-    args := argue.ParseCliArgs()
-    help.PrintIfHelpFlag(args)
+    args := cli.ParseCliArgs()
+    cli.PrintIfHelpFlag(args)
 
     all_entries := manifest.LoadManifest(args.jsonfile)
 
