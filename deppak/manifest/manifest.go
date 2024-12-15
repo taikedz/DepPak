@@ -12,6 +12,7 @@ type Dependency struct {
     Deploy map[string][]string
 }
 
+
 func LoadManifest(path string) ([]Dependency, error) {
     // NOTE - when loading the manifest, ensure there are no duplicate hashes (excl "-")
     content, err := ioutil.ReadFile(path)
@@ -35,7 +36,7 @@ func extractManifest(json_data string) ([]Dependency, error) {
     err := json.Unmarshal([]byte(json_data), &data)
 
     if err != nil {
-        return nil, err
+        return nil, errors.New("JSON parsing error: "+err.Error())
     }
 
     for _, item := range data {
