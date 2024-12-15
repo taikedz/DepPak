@@ -36,7 +36,7 @@ func extractManifest(json_data string) ([]Dependency, error) {
     err := json.Unmarshal([]byte(json_data), &data)
 
     if err != nil {
-        return nil, errors.New("JSON parsing error: "+err.Error())
+        return nil, err
     }
 
     for _, item := range data {

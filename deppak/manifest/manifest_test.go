@@ -3,19 +3,19 @@ package manifest
 import (
     "testing"
     "fmt"
-    "strings"
+    "errors"
+    "encoding/json"
 )
 
 func isParseError(err error) bool {
     // Should not be needed when the JSON is hardcoded
     // But I did hard code bad JSON at one point and tore my hair out
     // I also tore lots of hair out to find out how to detect error types
-    // It's insane, so just going with string checking.
+    // It's insane, so using a type declaration workaround
+    //   and documenting this for myself...
     if err != nil {
-
-        if strings.Contains(err.Error(), "JSON parsing error") {
-            return true
-        }
+        var parserr *json.SyntaxError
+        return errors.As(err, &parserr)
     }
     return false
 }
