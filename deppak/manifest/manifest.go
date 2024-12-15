@@ -3,6 +3,7 @@ package manifest
 import (
     "encoding/json"
     "errors"
+    "fmt"
     "io/ioutil"
 )
 
@@ -14,12 +15,43 @@ type Dependency struct {
 
 
 func LoadManifest(path string) ([]Dependency, error) {
-    // NOTE - when loading the manifest, ensure there are no duplicate hashes (excl "-")
     content, err := ioutil.ReadFile(path)
     if err != nil {
         return nil, err
     }
-    return extractManifest(string(content))
+    dependencies, xerr := extractManifest(string(content))
+    if xerr != nil {
+        return nil, xerr
+    }
+
+    if dupes := findHashDuplicates(dependencies); len(dupes) > 0 {
+        return nil, errors.New(fmt.Sprintf("Duplicate hashes found - assemble all under one hash: %s", dupes))
+    }
+
+    return dependencies, xerr
+}
+
+func findHashDuplicates(dependencies []Dependency) []string {
+    var seen_hashes = make(map[string]struct{}, 0)
+    var dupes_map = make(map[string]struct{}, 0)
+    var SEEN struct{}
+
+    for _, dep := range dependencies {
+        if dep.Hash == "-" { continue; }
+
+        if _, found := seen_hashes[dep.Hash]; found {
+            dupes_map[dep.Hash] = SEEN
+        } else {
+            seen_hashes[dep.Hash] = SEEN
+        }
+    }
+
+    var dupes_list = make([]string, 0, len(dupes_map))
+    for hash,_ := range(dupes_map) {
+        dupes_list = append(dupes_list, hash)
+    }
+
+    return dupes_list
 }
 
 

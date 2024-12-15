@@ -72,3 +72,29 @@ func Test_extractManifest(t *testing.T) {
     }
     if errors.As(err, &ParseErr) { return ; }
 }
+
+
+func Test_findHashDuplicates(t *testing.T) {
+    var deps = make([]Dependency, 0, 5)
+
+    deps = append(deps, Dependency{"abc", "here", nil})
+    deps = append(deps, Dependency{"def", "there", nil})
+    deps = append(deps, Dependency{"-", "this", nil})
+    deps = append(deps, Dependency{"-", "that", nil})
+
+    if dupes := findHashDuplicates(deps); len(dupes) > 0 {
+        t.Errorf("Should not have found duplicates, found %s", dupes)
+    }
+
+    deps = append(deps, Dependency{"abc", "here", nil})
+
+    dupes := findHashDuplicates(deps)
+    if len(dupes) != 1 {
+        t.Errorf("Should have found one duplicate, found %s", dupes)
+    } else {
+        if dupes[0] != "abc" {
+            t.Errorf("Expected 'abc', found %s", dupes)
+        }
+    }
+
+}
