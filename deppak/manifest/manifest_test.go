@@ -7,18 +7,17 @@ import (
     "encoding/json"
 )
 
-func isParseError(err error) bool {
-    // Should not be needed when the JSON is hardcoded
-    // But I did hard code bad JSON at one point and tore my hair out
-    // I also tore lots of hair out to find out how to detect error types
-    // It's insane, so using a type declaration workaround
-    //   and documenting this for myself...
-    if err != nil {
-        var parserr *json.SyntaxError
-        return errors.As(err, &parserr)
-    }
-    return false
-}
+
+// Parse error checking should not be needed when the JSON is hardcoded
+// But I did hard code bad JSON at one point and tore my hair out
+// I also tore lots of hair out to find out how to detect error types
+// It's insane, so using a type declaration workaround
+//   and documenting this for myself...
+
+// Create a throwaway variable of the type of the error to detect
+// then use `errors.As(err, &ParseErr)`
+var ParseErr *json.SyntaxError
+
 
 func Test_extractManifest(t *testing.T) {
     hash_val := "abcd1234"
@@ -28,7 +27,7 @@ func Test_extractManifest(t *testing.T) {
     if err != nil {
         t.Errorf("%s", err)
     }
-    if isParseError(err) { return ; }
+    if errors.As(err, &ParseErr) { return ; }
 
     data := datalist[0]
     if data.Hash != hash_val {
@@ -45,7 +44,7 @@ func Test_extractManifest(t *testing.T) {
     if err != nil {
         t.Errorf("%s", err )
     }
-    if isParseError(err) { return ; }
+    if errors.As(err, &ParseErr) { return ; }
 
     data = datalist[0]
     if len(data.Deploy) != 0 {
@@ -57,19 +56,19 @@ func Test_extractManifest(t *testing.T) {
     if err == nil {
         t.Errorf("Missing: Should have failed on incomplete input! -> %s", datalist)
     }
-    if isParseError(err) { return ; }
+    if errors.As(err, &ParseErr) { return ; }
 
     // This actually succeeds - unaccounted-for keys are simply ignored.
     datalist, err = extractManifest(`[{"url":"ok", "hash":"what", "src": "here", "damn":"oops"}]`)
     if err != nil {
         t.Errorf("Extra: Should have succeded ignoring extraneous input! -> %s", datalist)
     }
-    if isParseError(err) { return ; }
+    if errors.As(err, &ParseErr) { return ; }
     
     // Nulls
     datalist, err = extractManifest(`{"url":null}`)
     if err == nil {
         t.Errorf("Null: Should have failed on null data input! -> %s", datalist)
     }
-    if isParseError(err) { return ; }
+    if errors.As(err, &ParseErr) { return ; }
 }
