@@ -10,50 +10,52 @@ func Test_extractManifest(t *testing.T) {
     dest_val := "mods/test_mod"
 
     // NOTE - this is the old format. We need to expect a "deploy" key with a map of source to list of dest
-    data, err := extractManifest(fmt.Sprintf(`{"url":"there", "hash":"%s", "dest":"%s", "src":"subdir"}`, hash_val, dest_val))
+    datalist, err := extractManifest(fmt.Sprintf(`[{"url":"there", "hash":"%s", "dest":"%s", "src":"subdir"}]`, hash_val, dest_val))
 
     if err != nil {
         t.Errorf("%s", err )
     }
 
+    data := datalist[0]
     if data.Hash != hash_val {
-        t.Errorf("Expected %s , got %s", hash_val, data.Hash)
+        t.Errorf("Full: Expected %s , got %s", hash_val, data.Hash)
     }
 
     if data.Dest != dest_val {
-        t.Errorf("Expected %s, got '%s'", dest_val, data.Dest)
+        t.Errorf("Full: Expected %s, got '%s'", dest_val, data.Dest)
     }
 
     // Omitting dest as it is optional
-    data2, err2 := extractManifest(fmt.Sprintf(`{"url":"there", "hash":"%s", "src":"subdir"}`, hash_val))
+    datalist, err = extractManifest(fmt.Sprintf(`[{"url":"there", "hash":"%s", "src":"subdir"}]`, hash_val))
 
-    if err2 != nil {
-        t.Errorf("%s", err2 )
+    if err != nil {
+        t.Errorf("%s", err )
     }
 
-    if data2.Dest != "." {
-        t.Errorf("Expected %s, got '%s'", dest_val, data2.Dest)
+    data = datalist[0]
+    if data.Dest != "." {
+        t.Errorf("Part: Expected Dest='%s', got '%s'", ".", data)
     }
 
-    data3, err3 := extractManifest(`{"url":"oops"}`)
-    if err3 == nil {
-        t.Errorf("Should have failed on incomplete input! -> %s", data3)
+    // Extract with missing fields
+    datalist, err = extractManifest(`[{"url":"oops"}]`)
+    if err == nil {
+        t.Errorf("Missing: Should have failed on incomplete input! -> %s", datalist)
     }
 
     /*
     // This actually succeeds - unaccounted-for keys are simply ignored.
-    data4, err4 := extractManifest(`{"url":"ok", "hash":"what", "src": "here", "damn":"oops"}`)
-    if err4 == nil {
-        t.Errorf("Should have failed on bad input! -> %s", data4)
+    datalist, err = extractManifest(`{"url":"ok", "hash":"what", "src": "here", "damn":"oops"}`)
+    if err == nil {
+        t.Errorf("Extra: Should have failed on bad input! -> %s", datalist)
     } else {
-        fmt.Printf("Got expected Err = %s\n", err4)
+        fmt.Printf("Extra: Got expected Err = %s\n", err)
     }
     // */
     
-    data5, err5 := extractManifest(`{"url":null}`)
-    if err5 == nil {
-        t.Errorf("Should have failed on null data input! -> %s", data5)
-    } else {
-        fmt.Printf("Got expected Err = %s\n", err5)
+    // Nulls
+    datalist, err = extractManifest(`{"url":null}`)
+    if err == nil {
+        t.Errorf("Null: Should have failed on null data input! -> %s", datalist)
     }
 }
