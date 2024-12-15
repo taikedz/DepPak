@@ -28,6 +28,8 @@ func LoadManifest(path string) ([]Dependency, error) {
         return nil, errors.New(fmt.Sprintf("Duplicate hashes found - assemble all under one hash: %s", dupes))
     }
 
+    // TODO - set default for "deploy", and check for illegal path skirting
+
     return dependencies, xerr
 }
 
