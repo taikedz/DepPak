@@ -9,7 +9,7 @@ import (
     "net.taikedz.deppak/deppak/net"
 )
 
-const TARBALL_STORE = "~/.local/var/deppak/tarballs"
+const ARCHIVE_STORE = "~/.local/var/deppak/z"
 
 func main() {
     args := cli.ParseCliArgs()
@@ -21,7 +21,7 @@ func main() {
     wg.Add(len(all_entries))
     failures = make(chan string, len(all_entries))
 
-    ensure_dir(TARBALL_STORE)
+    ensure_dir(ARCHIVE_STORE)
 
     for entry in all_entries {
         go download_entry(entry, &wg, failures)
