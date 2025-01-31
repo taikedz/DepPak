@@ -31,6 +31,8 @@ func FetchHttp(url string, destfile string) (err error) {
     return nil
 }
 
-// TODO - also support SSH/SCP
-// Ignore: FTP(S), Telnet, etc. These are defunct protocols that no longer have reason to be used.
+// TODO - also support SSH/SCP, and git
+// Welcome in future: implementations for mercurial, fossil. Maybe SVN as it is still heavily used
 // also support `file://` scheme which should create a symlink
+
+// Ignore: FTP(S), Telnet, etc. These are defunct protocols that no longer have reason to be used.

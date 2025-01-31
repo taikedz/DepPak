@@ -4,7 +4,7 @@ A small utility inspired by the "dependencies" section in `build.zig.zon`.
 
 Allows setting dependencies from a file pointing to archive files, including hash-checking.
 
-Archive files are downloaded to `~/.local/var/deppak/cache/`
+Archive files are downloaded to `~/.local/var/deppak/z/`
 
 Reads a JSON file which has the following format:
 
@@ -28,7 +28,7 @@ Reads a JSON file which has the following format:
 ]
 ```
 
-* This will store the archive file at `~/.local/var/deppak/cache/abcd1234/file.tgz`
+* This will store the archive file at `~/.local/var/deppak/z/abcd1234/file.tgz`
 * DepPak will unpack the archive, and move the contents of `appcode/` into `./src/feature`
 
 This syncs all the specified archives, validates the hash, and unpacks it to a location.
@@ -41,7 +41,7 @@ See [command examples](command_examples.md) for additional information
 
 This can be used where any bunch of distributable files is to be collected.
 
-I would have happily used this for distributing a spec list of Minetest mods for a server, for example.
+I would have happily used this for distributing a spec list of Luanti (Minetest) mods for a server, for example.
 
 Any language, project or application that doesn't have its own bundle distribution system can use this.
 
