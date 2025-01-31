@@ -60,13 +60,15 @@ func findHashDuplicates(dependencies []Dependency) []string {
 func extractManifest(json_data string) ([]Dependency, error) {
     var data []Dependency
 
-    // Interestingly:
-    //   unknown keys are ignored (value discarded)
-    //   missing keys are non-populated
-    //   null-values are non-populated when target is unmarshalled as SyncItem,
-    //      but actually fails when []Dependency...
-    // Non-populated values leave the struct at default values
-    // So null in JSON leads to a struct string field becoming  ""
+    /*
+    Interestingly:
+      unknown keys are ignored (value discarded)
+      missing keys are non-populated
+      null-values are non-populated when target is unmarshalled as SyncItem,
+         but actually fails when []Dependency...
+    Non-populated values leave the struct at default values
+    So null in JSON leads to a struct string field becoming  ""
+    */
     err := json.Unmarshal([]byte(json_data), &data)
 
     if err != nil {
