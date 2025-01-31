@@ -46,20 +46,20 @@ func ParseCliArgs() DepPakArgs {
     positionals := flag.Args()
 
     if len(positionals) != 1 {
-        fail(nstatus.ARGUMENT_ERROR, "Expecting one MANIFEST argument")
+        fail(nstatus.ERR_ARGUMENT_ERROR, "Expecting one MANIFEST argument")
     }
 
     if token, ok := checkTrailingFlags(positionals); !ok {
-        fail(nstatus.ARGUMENT_ERROR, "Found flag '%s' . Place all flags before positional arguments.\n", token)
+        fail(nstatus.ERR_ARGUMENT_ERROR, "Found flag '%s' . Place all flags before positional arguments.\n", token)
     }
 
     pos_info, err := os.Stat(positionals[0])
-    if err != nil { fail(nstatus.ARGUMENT_ERROR, "Could not access '%s': %s", positionals[0], err); }
-    if pos_info.IsDir() { fail(nstatus.ARGUMENT_ERROR, "'%s' is a directory, file required", positionals[0]) }
+    if err != nil { fail(nstatus.ERR_ARGUMENT_ERROR, "Could not access '%s': %s", positionals[0], err); }
+    if pos_info.IsDir() { fail(nstatus.ERR_ARGUMENT_ERROR, "'%s' is a directory, file required", positionals[0]) }
 
     urt_info, err := os.Stat(unpack_root)
-    if err != nil { fail(nstatus.ARGUMENT_ERROR, "Could not access '%s': %s", unpack_root, err); }
-    if !urt_info.IsDir() { fail(nstatus.ARGUMENT_ERROR, "'%s' is not a directory", unpack_root) }
+    if err != nil { fail(nstatus.ERR_ARGUMENT_ERROR, "Could not access '%s': %s", unpack_root, err); }
+    if !urt_info.IsDir() { fail(nstatus.ERR_ARGUMENT_ERROR, "'%s' is not a directory", unpack_root) }
 
     return DepPakArgs{positionals[0], unpack_root}
 }

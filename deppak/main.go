@@ -7,6 +7,7 @@ import (
 
     "net.taikedz.deppak/deppak/manifest"
     "net.taikedz.deppak/deppak/cli"
+    "net.taikedz.deppak/deppak/names"
 //    "net.taikedz.deppak/deppak/net"
 )
 
@@ -17,7 +18,10 @@ func main() {
     args := cli.ParseCliArgs()
 
     all_entries, err := manifest.LoadManifest(args.Manifest_path)
-    _ = err // DEBUG
+    if err != nil {
+        fmt.Println(err)
+        os.Exit(names.ERR_BAD_MANIFEST)
+    }
 
     var wg sync.WaitGroup
     wg.Add(len(all_entries))

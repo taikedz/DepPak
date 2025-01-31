@@ -25,7 +25,7 @@ func LoadManifest(path string) ([]Dependency, error) {
     }
 
     if dupes := findHashDuplicates(dependencies); len(dupes) > 0 {
-        return nil, errors.New(fmt.Sprintf("Duplicate hashes found - assemble all under one hash: %s", dupes))
+        return nil, errors.New(fmt.Sprintf("Duplicate hashes found - assemble all under one hash. Duplicate hashes: %s", dupes))
     }
 
     // TODO - set default for "deploy", and check for illegal path skirting
