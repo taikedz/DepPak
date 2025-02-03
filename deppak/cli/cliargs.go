@@ -5,6 +5,7 @@ import (
     "fmt"
     "os"
 	nstatus "net.taikedz.deppak/deppak/names"
+    "net.taikedz.deppak/deppak/util"
 )
 
 
@@ -33,38 +34,26 @@ func checkTrailingFlags(tokens []string) (token string, ok bool) {
 }
 
 func ParseCliArgs() DepPakArgs {
-    /* Want to be able to either of
-     *
-     * deppak MANIFEST --unpack-root=./path
-     * deppak --unpack-root=./path MANIFEST
-     *
-     * That is, flags can bloody well come after the positionals
-     */
     var unpack_root string
-    flag.StringVar(&unpack_root, "unpack-root", "./", "Top level directory to unpack to")
+    flag.StringVar(&unpack_root, "unpack-to", "./", "Top level directory to unpack to")
     flag.Parse()
     positionals := flag.Args()
 
     if len(positionals) != 1 {
-        fail(nstatus.ERR_ARGUMENT_ERROR, "Expecting one MANIFEST argument")
+        util.Fail(nstatus.ERR_ARGUMENT_ERROR, "Expecting one MANIFEST argument")
     }
 
     if token, ok := checkTrailingFlags(positionals); !ok {
-        fail(nstatus.ERR_ARGUMENT_ERROR, "Found flag '%s' . Place all flags before positional arguments.\n", token)
+        util.Fail(nstatus.ERR_ARGUMENT_ERROR, "Found flag '%s' . Place all flags before positional arguments.\n", token)
     }
 
     pos_info, err := os.Stat(positionals[0])
-    if err != nil { fail(nstatus.ERR_ARGUMENT_ERROR, "Could not access '%s': %s", positionals[0], err); }
-    if pos_info.IsDir() { fail(nstatus.ERR_ARGUMENT_ERROR, "'%s' is a directory, file required", positionals[0]) }
+    if err != nil { util.Fail(nstatus.ERR_ARGUMENT_ERROR, "Could not access '%s': %s", positionals[0], err); }
+    if pos_info.IsDir() { util.Fail(nstatus.ERR_ARGUMENT_ERROR, "'%s' is a directory, file required", positionals[0]) }
 
     urt_info, err := os.Stat(unpack_root)
-    if err != nil { fail(nstatus.ERR_ARGUMENT_ERROR, "Could not access '%s': %s", unpack_root, err); }
-    if !urt_info.IsDir() { fail(nstatus.ERR_ARGUMENT_ERROR, "'%s' is not a directory", unpack_root) }
+    if err != nil { util.Fail(nstatus.ERR_ARGUMENT_ERROR, "Could not access '%s': %s", unpack_root, err); }
+    if !urt_info.IsDir() { util.Fail(nstatus.ERR_ARGUMENT_ERROR, "'%s' is not a directory", unpack_root) }
 
     return DepPakArgs{positionals[0], unpack_root}
-}
-
-func fail(status int, message string, tokens... any) {
-    fmt.Println(fmt.Sprintf(message, tokens...))
-    os.Exit(status)
 }

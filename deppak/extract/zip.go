@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-func ExtractZip(archive_path str, dest_dir string) error { // FIXME - add a path filter
+func ExtractZip(archive_path str, dest_dir string, deploy_targets map[string][]string) error {
 	archive_handler, err := zip.OpenReader(archive_path)
 	if err != nil {
 		return err
@@ -19,6 +19,7 @@ func ExtractZip(archive_path str, dest_dir string) error { // FIXME - add a path
 	os.MkdirAll(dest_dir, 0700)
 
 	for _, inner_file := range archive_handler.File {
+		// FIXME - etracts all files. Want to match a file from source, and copy to all destinations as specified by the entry deploy list
 		err := extractInnerFile(inner_file, dest_dir) {
 			if err != nil {
 				return err

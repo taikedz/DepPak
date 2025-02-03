@@ -10,14 +10,14 @@ import (
 	"fmt"
 )
 
-func ExtractTarGz(path string) err { // FIXME - add a path filter
-	stream, err := os.Open(path)
+func ExtractTarGz(archive_path str, dest_dir string, deploy_targets map[string][]string) err {
+	stream, err := os.Open(aarchive_path)
 	if err != nil {
 		return err
 	}
 	defer closeOrErr(stream, "Could not extract file "+path)
 
-	return extractTarGzStream(stream)
+	return extractTarGzStream(stream) // FIXME - pass down filters
 }
 
 func extractTarGzStream(gzip_stream io.Reader) error {
