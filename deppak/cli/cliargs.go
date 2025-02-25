@@ -6,6 +6,8 @@ import (
     "os"
 	nstatus "net.taikedz.deppak/deppak/names"
     "net.taikedz.deppak/deppak/util"
+
+    "github.com/taikedz/goargs/goargs"
 )
 
 
@@ -14,46 +16,24 @@ type DepPakArgs struct {
     Unpack_root string
 }
 
-
-func checkTrailingFlags(tokens []string) (token string, ok bool) {
-    /* Check all tokens for anything that looks like a flag.
-    If one is found, returns it with false
-    Else, return empty string with true.
-
-    Returns:
-        token string - potentially faulty token
-        ok bool - true if no flag found, false if unexpected flag found
-    */
-    for _, t := range tokens {
-        if len(t) > 0 && t[0] == '-' {
-            return t, false
-        }
-    }
-
-    return "", true
-}
-
 func ParseCliArgs() DepPakArgs {
     var unpack_root string
-    flag.StringVar(&unpack_root, "unpack-to", "./", "Top level directory to unpack to")
-    flag.Parse()
-    positionals := flag.Args()
+    var manifest string
 
-    if len(positionals) != 1 {
-        util.Fail(nstatus.ERR_ARGUMENT_ERROR, "Expecting one MANIFEST argument")
+    parser := goargs.NewParser("DepPak options")
+    parser.StringVar(&unpack_root, "unpack-to", "./", "Top level directory to unpack to")
+    parser.Parse()
+    if err := goargs.UnpackExactly(parser.Args(), &manifest); err != nil {
+        util.Fail(nstatus.ERR_ARGUMENT_ERROR, "Expected one argument (MANIFEST)")
     }
 
-    if token, ok := checkTrailingFlags(positionals); !ok {
-        util.Fail(nstatus.ERR_ARGUMENT_ERROR, "Found flag '%s' . Place all flags before positional arguments.\n", token)
-    }
-
-    pos_info, err := os.Stat(positionals[0])
-    if err != nil { util.Fail(nstatus.ERR_ARGUMENT_ERROR, "Could not access '%s': %s", positionals[0], err); }
-    if pos_info.IsDir() { util.Fail(nstatus.ERR_ARGUMENT_ERROR, "'%s' is a directory, file required", positionals[0]) }
+    pos_info, err := os.Stat(manifest)
+    if err != nil { util.Fail(nstatus.ERR_ARGUMENT_ERROR, "Could not access '%s': %s", manifest, err); }
+    if pos_info.IsDir() { util.Fail(nstatus.ERR_ARGUMENT_ERROR, "'%s' is a directory, file required", manifest) }
 
     urt_info, err := os.Stat(unpack_root)
     if err != nil { util.Fail(nstatus.ERR_ARGUMENT_ERROR, "Could not access '%s': %s", unpack_root, err); }
     if !urt_info.IsDir() { util.Fail(nstatus.ERR_ARGUMENT_ERROR, "'%s' is not a directory", unpack_root) }
 
-    return DepPakArgs{positionals[0], unpack_root}
+    return DepPakArgs{manifest, unpack_root}
 }
